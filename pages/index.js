@@ -1,20 +1,12 @@
-import Head from 'next/head'
 import { Inter } from '@next/font/google'
+import { useRouter } from 'next/router'
+// import SideBar from '../components/SideBar'
 
 const inter = Inter({ subsets: ['latin'] })
 
 export default function Home() {
-  return (
-    <>
-      <Head>
-        <title>Nkata</title>
-        <meta name="description" content="Chat your experience" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <h1 >
-        welcome to Nkata
-      </h1>
-    </>
-  )
+  const router = useRouter();
+  router.push('/chat/_blank_');
+  return null;
+
 }

@@ -1,0 +1,27 @@
+
+:root{
+  --display_scrn:40px;
+  --display_nav:50px;
+
+}
+::selection {
+  color:#db9224;
+  background:#272727;
+}
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+  }
+
+  body{
+  scrollbar-width:none;
+  font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  }
+  body::-webkit-scrollbar {
+    display:none;
+  }
+
+
+
