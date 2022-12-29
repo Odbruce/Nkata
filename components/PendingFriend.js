@@ -3,6 +3,7 @@ import React, { useEffect } from 'react'
 import { useCollection, useDocument } from 'react-firebase-hooks/firestore';
 import { db } from '../firebase'
 import styled from '@emotion/styled';
+import Image from 'next/image';
 
 
 const PendingFriend = ({uid,id}) => {
@@ -27,7 +28,7 @@ const PendingFriend = ({uid,id}) => {
 
   return (
         <Requests >
-          <img src={docSnap?.data().photoURL} alt={docSnap?.data().displayName} />
+          <Image width={50} height={50} src={docSnap?.data().photoURL} alt={docSnap?.data().displayName} />
           <div>
             <h4>{docSnap?.data().displayName}</h4>
             <div>

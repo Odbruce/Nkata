@@ -6,6 +6,7 @@ import { db } from "../firebase"
 import { collection,  orderBy, query,doc } from "firebase/firestore";
 
 import { useDocument,useCollection } from "react-firebase-hooks/firestore"
+import Image from "next/image"
 
 const AddStory =   ({user}) => {
 
@@ -32,7 +33,7 @@ const [storySnap] =  useCollection(colRef)
       <DisplayStatus set={setShow}/>
     </Wrap>}
     <Wrapper border ={storySnap?.empty?"none":"purple"} >
-      <img   src={snap?.data().photoURL} alt={snap?.data().displayName} onClick={()=>setShow(true)} />
+      <Image fill src={snap?.data().photoURL} alt={snap?.data().displayName} onClick={()=>setShow(true)} />
       <Addicon onClick={display}/>
     </Wrapper>
     </>

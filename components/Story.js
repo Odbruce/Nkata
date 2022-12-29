@@ -5,6 +5,7 @@ import {db} from "../firebase"
 import { useCollection,useDocument } from "react-firebase-hooks/firestore";
 import DisplayStatus from "./DisplayStatus"
 import {useState} from "react"
+import Image from 'next/image';
 
 
 const Story = ({uid}) => {
@@ -27,7 +28,7 @@ if(storySnap?.empty){
       <DisplayStatus uid={uid} set={setShow}/>
     </Wrap>}
     <Wrapper  >
-      <img src={snap?.data().photoURL} alt="" onClick={()=>setShow(true)} />
+      <Image fill src={snap?.data().photoURL} alt="" onClick={()=>setShow(true)} />
     </Wrapper>
     </>
 }
@@ -44,12 +45,11 @@ const Wrapper = styled.li`
   border-radius: 50%;
   display: grid;
   cursor: pointer;
+  position:relative;
 
   img {
     border-radius: 50%;
     background: #272727;
-    width: 100%;
-    height: 100%;
     object-fit: cover;
   }
 `;

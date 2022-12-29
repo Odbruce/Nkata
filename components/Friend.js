@@ -5,6 +5,7 @@ import {doc} from "firebase/firestore";
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { db } from '../firebase';
 import { Notify } from './SideBar';
+import Image from 'next/image';
 
 
 const Friend = ({id,uid}) => {
@@ -16,7 +17,7 @@ const Friend = ({id,uid}) => {
     const [docSnap] = useDocument(friendref);
   return (
     <Friends onClick={handle}>
-    <img src={docSnap?.data().photoURL} alt={docSnap?.data().displayName} />
+    <Image width={60} height={60} src={docSnap?.data().photoURL} alt={docSnap?.data().displayName} />
     <div>
       <h1>{docSnap?.data().displayName}</h1>
       {/* add substring feature for text to cut text add ellipses */}

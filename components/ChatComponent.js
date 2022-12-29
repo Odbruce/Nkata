@@ -23,6 +23,7 @@ import { auth, db } from "../firebase";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import TimeAgo from "timeago-react";
+import Image from "next/image";
 
 const ChatComponent = ({ chat, recipient, messages }) => {
   const [user] = useAuthState(auth);
@@ -55,7 +56,9 @@ const ChatComponent = ({ chat, recipient, messages }) => {
         } else {
           return (
             <LeftWrap>
-              <img src={msg.data().photoURL} alt={msg.data().displayName} />
+              <div className="msg_cont">
+              <Image fill src={msg.data().photoURL} alt={msg.data().displayName} />
+              </div>
               <MsgWrapLeft>
                 <Messages user={recipient.uid} messages={msg.data()} />
                 <p>
@@ -84,7 +87,9 @@ const ChatComponent = ({ chat, recipient, messages }) => {
         } else {
           return (
             <LeftWrap>
-              <img src={msg.photoURL} alt={msg.displayName} />
+              <div className="msg_cont">
+              <Image fill src={msg.photoURL} alt={msg.displayName} />
+              </div>
               <MsgWrapLeft>
                 <Messages user={recipient.uid} messages={msg} />
                 <p>
@@ -130,7 +135,7 @@ const ChatComponent = ({ chat, recipient, messages }) => {
             <h6 onClick={() => route.push("/chat/_blank_")}>back</h6>
           </div>
           <ImgWrapper>
-            <ChatImg src={recipient?.photoURL} alt={recipient?.displayName} />
+            <Image fill src={recipient?.photoURL} alt={recipient?.displayName} />
           </ImgWrapper>
           <p>
             last seen :{" "}
@@ -225,13 +230,15 @@ const ImgWrapper = styled.div`
   justify-content: center;
   align-items: center;
   cursor: pointer;
-`;
-const ChatImg = styled.img`
-  object-fit: cover;
-  height: calc(40px - 0.6rem);
-  aspect-ratio: 1/1;
-  border-radius: 50%;
-  background: grey;
+  position:relative;
+
+  img{
+    object-fit: cover;
+    height: calc(40px - 0.6rem);
+    aspect-ratio: 1/1;
+    border-radius: 50%;
+    background: grey;
+  }
 `;
 const ChatIcons = styled.div`
   display: flex;
@@ -247,15 +254,15 @@ const InputWrapper = styled.div`
   font-size: clamp(12px, calc(8px + 2vw), 20px);
 
   .active {
-    transform: scaleX(0) scaleY(0);
-    transform-origin: left bottom;
-    opacity: 0;
+    transform: scaleX(1) scaleY(1);
+    opacity: 1;
   }
-`;
-const MediaWrap = styled.div`
+  `;
+  const MediaWrap = styled.div`
   position: absolute;
   top: -60px;
   transition: 0.5s;
+  transform-origin: left bottom;
   width: 100px;
   height: 60px;
   background: whitesmoke;
@@ -267,6 +274,8 @@ const MediaWrap = styled.div`
   border-radius: 45px;
   background: linear-gradient(145deg, #f5f5f5, #cecece);
   box-shadow: 5px 5px 20px #b9b9b9, -5px -5px 20px #ffffff;
+  transform: scaleX(0) scaleY(0);
+  opacity: 0;
 `;
 
 const VideoaAdd = styled(AiOutlineVideoCameraAdd)`
@@ -332,14 +341,21 @@ const LeftWrap = styled.div`
   display: flex;
   align-items: center;
 
-  img {
+  .msg_cont{
     width: calc(var(--display_nav) - 1rem);
-    aspect-ratio: 1/1;
+    height:calc(var(--display_nav) - 1rem);
+    position:relative;
     border-radius: 50%;
-    object-fit: cover;
-    background: black;
     margin-right: 0.5rem;
+
+
+    img {
+      border-radius: 50%;
+      object-fit: cover;
+      background: black;
+    }
   }
+
 `;
 const MsgWrapLeft = styled(MsgWrap)`
   background: #979797;

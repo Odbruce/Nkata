@@ -3,9 +3,10 @@ import {ImBin2} from "react-icons/im"
 import React from 'react'
 import { useState,useEffect } from 'react';
 import { GrClose } from 'react-icons/gr';
-import { arrayUnion, deleteDoc, doc, setDoc } from 'firebase/firestore';
-import { auth, db, storage } from '../firebase';
+import {  deleteDoc, doc } from 'firebase/firestore';
+import {  db } from '../firebase';
 import { deleteObject, ref } from 'firebase/storage';
+import Image from 'next/image';
 
 
 
@@ -50,7 +51,7 @@ const StatusPost = ({set,data,prop,id} ) => {
   return (
     <StatusConc multiple={count} >
         <Header>
-          <img src={data.photoURL} alt="" />
+          <Image width={50} height={50} src={data.photoURL} alt="" />
           <div>
             <p>{data.userName} </p>
             <p>posted at</p>
@@ -60,7 +61,7 @@ const StatusPost = ({set,data,prop,id} ) => {
         </Header>
         <Screen style={{backgroundColor:data.background}}>
         {data.type.includes("image") ? (
-          <img src={data.data} alt={data.name} />
+          <Image fill src={data.data} alt={data.name} />
         ) : data.type.includes("video") ? (
           <video id="str_video" autoPlay playsInline loop muted>
             <source type="video/mp4" src={data.data} />
@@ -80,6 +81,7 @@ export default StatusPost
 
 const StatusConc = styled.div`
   max-width: 600px;
+  display:block;
   position: relative;
   height: 80vh;
   top:10%;
@@ -163,16 +165,21 @@ const Screen = styled.div`
   flex-direction: center;
   justify-content: center;
   align-items: center;
+  display:block;
 
   h2 {
     width: 100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
     font-size: 20px;
-    height: 50%;
     outline: none;
     padding: 1em;
-    background: transparent;
     border: none;
     text-align: center;
+    position:absolute;
+    margin:0 auto;
 
     ::placeholder {
       font-size: 48px;

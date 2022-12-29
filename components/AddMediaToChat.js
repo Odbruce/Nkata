@@ -1,4 +1,5 @@
 import styled from "@emotion/styled";
+import Image from "next/image";
 import React from "react";
 import { RiSendPlaneFill } from "react-icons/ri";
 
@@ -7,7 +8,7 @@ const AddMediaToChat = () => {
 
   return (
     <Wrapper>
-      <img src="" alt="" />
+      <Image fill src="" alt="" />
       <form onSubmit={handled}>
         <input type="text" name="" id="up_text" />
         <label htmlFor="up_text">

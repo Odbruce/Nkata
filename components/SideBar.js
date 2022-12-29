@@ -21,6 +21,7 @@ import PendingFriend from "./PendingFriend";
 import Friend from "./Friend";
 import { signOut } from "firebase/auth";
 import { useRouter } from "next/router";
+import Image from "next/image";
 
 const SideBar = () => {
   const [user] = useAuthState(auth);
@@ -116,7 +117,12 @@ const SideBar = () => {
     <Wrapper display={route.query.id}>
       <Header>
         <ProfileWrap ref={proRef}>
-          <img src={user.photoURL} alt={user.displayName} />
+          <Image
+            width={50}
+            height={50}
+            src={user.photoURL}
+            alt={user.displayName}
+          />
           <h4>{user.displayName}</h4>
           <h4 onClick={copy}>
             ID : <span id={"span"}>{user.uid}</span> <MdContentCopy />
@@ -205,9 +211,9 @@ const Header = styled.nav`
   background: white;
 
   .active {
-    transform: translateY(10%);
-    opacity: 0;
-    pointer-events: none;
+    transform: translateY(0);
+    opacity: 1;
+    pointer-events: initial;
   }
   .dot {
     cursor: pointer;
@@ -229,6 +235,9 @@ const ProfileWrap = styled.div`
   background: #e5e5e5;
   box-shadow: inset 5px 5px 20px #b9b9b9, inset -5px -5px 20px #ffffff;
   color: #272727;
+  transform: translateY(10%);
+  opacity: 0;
+  pointer-events: none;
 
   .out {
     color: #d0342c;
@@ -250,7 +259,15 @@ const ProfileWrap = styled.div`
     text-transform: capitalize;
     width: 100%;
 
+    span {
+      background: whitesmoke;
+    }
+
     :nth-of-type(2) {
+      cursor: pointer;
+      text-transfrom: lowercase;
+    }
+    :nth-of-type(3) {
       cursor: pointer;
       text-transfrom: lowercase;
     }

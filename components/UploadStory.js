@@ -10,6 +10,7 @@ import { auth, db, storage } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
 import { useDocument } from "react-firebase-hooks/firestore";
+import Image from "next/image";
 
 const UploadStory = () => {
   const [user] = useAuthState(auth);
@@ -131,7 +132,7 @@ const UploadStory = () => {
       </Header>
       <Screen id="str_screen">
         {Input?.type?.includes("image") ? (
-          <img src={URL.createObjectURL(Input)} alt="" />
+          <Image fill src={URL.createObjectURL(Input)} alt="" />
         ) : Input?.type?.includes("video") ? (
           <video id="str_video" autoPlay playsInline loop muted>
             <source type="video/mp4" src={URL.createObjectURL(Input)} />
