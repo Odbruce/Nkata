@@ -164,6 +164,7 @@ const Container = styled.div`
   position: relative;
   top:10%;
   bottom:10%;
+  z-index:15;
 `;
 
 const UploadForm = styled.form`
