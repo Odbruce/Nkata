@@ -34,7 +34,7 @@ const [storySnap] =  useCollection(colRef)
     </Wrap>}
     <Wrapper border ={storySnap?.empty?"none":"purple"} >
       <Image fill src={snap?.data().photoURL} alt={snap?.data().displayName} onClick={()=>setShow(true)} />
-      <Addicon onClick={display}/>
+      <Addicon  onClick={display}/>
     </Wrapper>
     </>
 }
@@ -67,11 +67,12 @@ const Wrapper = styled.li`
 
 const Addicon = styled(BsPlusCircleFill)`
     position:absolute;
-    left:-25%;
+    left:-10%;
     border:2px solid white;
     border-radius:50%;
     background:white;
     color: #26b960;
+    font-size:20px;
   `
 
   const Wrap = styled.section`
