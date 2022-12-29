@@ -46,6 +46,8 @@ const StatusPost = ({set,data,prop,id} ) => {
         },5000)
       
         return ()=>{clearTimeout(timed)}
+
+        // eslint-disable-next-line
       },[count])
 
   return (

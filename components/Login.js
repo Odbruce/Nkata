@@ -170,9 +170,9 @@ const Login = () => {
             </Social>
 
             <p>
-              Signing up with social is super quick. No extra passwords to
+              {`Signing up with social is super quick. No extra passwords to
               remember - no brain fail. Don't worry, we'd never share any of
-              your data or post anything on your behalf
+              your data or post anything on your behalf`}
             </p>
             <h4>OR SIGN {isAuser ? "IN" : "UP"} WITH EMAIL</h4>
           </SocialWrapper>

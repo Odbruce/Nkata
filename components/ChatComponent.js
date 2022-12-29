@@ -41,10 +41,10 @@ const ChatComponent = ({ chat, recipient, messages }) => {
   console.log(messageSnap);
   const getMessages = () => {
     if (messageSnap) {
-      return messageSnap.docs.map((msg) => {
+      return messageSnap.docs.map((msg,index) => {
         if (msg.data().uid !== recipient?.uid) {
           return (
-            <MsgWrapRight>
+            <MsgWrapRight key={index}>
               <Messages user={recipient.uid} messages={msg.data()} />
               <p>
                 {msg.data().posted?.toDate() ? (
@@ -55,7 +55,7 @@ const ChatComponent = ({ chat, recipient, messages }) => {
           );
         } else {
           return (
-            <LeftWrap>
+            <LeftWrap key={index}>
               <div className="msg_cont">
               <Image fill src={msg.data().photoURL} alt={msg.data().displayName} />
               </div>
@@ -72,10 +72,10 @@ const ChatComponent = ({ chat, recipient, messages }) => {
         }
       });
     } else {
-      return JSON.parse(messages).map((msg) => {
+      return JSON.parse(messages).map((msg,index) => {
         if (msg.uid !== recipient?.uid) {
           return (
-            <MsgWrapRight>
+            <MsgWrapRight key={index}>
               <Messages user={recipient.uid} messages={msg} />
               <p>
                 {msg.posted?.toDate() ? (
@@ -86,7 +86,7 @@ const ChatComponent = ({ chat, recipient, messages }) => {
           );
         } else {
           return (
-            <LeftWrap>
+            <LeftWrap key={index}>
               <div className="msg_cont">
               <Image fill src={msg.photoURL} alt={msg.displayName} />
               </div>
