@@ -169,7 +169,8 @@ const Container = styled.div`
 const UploadForm = styled.form`
   display: flex;
   height: 50px;
-  position: sticky;
+  position: absolute;
+  width:100%;
   bottom: 0;
   padding: 0.4em 1em;
   background: white;
