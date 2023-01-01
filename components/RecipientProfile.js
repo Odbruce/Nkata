@@ -58,7 +58,11 @@ localConn.onicecandidate = function(event){
       },{merge:true})
   }
   }
-  
+  localConn.ontrack = (e)=>{
+    if(document.getElementById("recipientstream").srcObject!==e.streams[0]){
+      document.getElementById("recipientstream").srcObject=e.streams[0]
+    }
+  }
 
 
 
@@ -109,7 +113,7 @@ return  setTimeout(()=>
 
         <NameWrap>
             <h4>{recipient?.displayName}</h4>
-            <h7>{recipient?.email}</h7>
+            <h6>{recipient?.email}</h6>
             <p>
             last seen :{" "}
             {recipient?.lastSeen?.toDate() ? (

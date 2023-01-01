@@ -41,10 +41,8 @@ const incoming = (msg)=>{
         localStream.current=stream;
         localConn.current.addStream(stream)
       })
-      // Set the remote description
-      console.log(localConn)
+      // Set the remote descp
       localConn.current.setRemoteDescription(new RTCSessionDescription(JSON.parse(msg?.typeData)));
-      console.log("calling")
 
       localConn.onicecandidate = function(event){
         if(event.candidate){
@@ -55,6 +53,12 @@ const incoming = (msg)=>{
               fromName:user?.displayName
             },{merge:true})
         }
+        }
+
+        localConn.ontrack = (e)=>{
+          if(document.getElementById("recipientstream").srcObject!==e.streams[0]){
+            document.getElementById("recipientstream").srcObject=e.streams[0]
+          }
         }
 
       //display call
@@ -121,7 +125,7 @@ const incoming = (msg)=>{
         <link rel="icon" href="/favicon.ico" />
       </Head>
     <Wrapper>
-      {callmsg&&<IncomingCall localConn={localConn.current} recipient={userDetails[0]?.data()} msg={callmsg}/>}
+      {callmsg&&<IncomingCall localConn={localConn.current} localStream={localStream.current} recipient={userDetails[0]?.data()} msg={callmsg}/>}
         <VideoChat />
         <SideBar messages={messages} />
         <ChatDisplayWrap display={route.query.id}>

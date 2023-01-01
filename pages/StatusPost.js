@@ -7,7 +7,7 @@ import {  deleteDoc, doc } from 'firebase/firestore';
 import {  db } from '../firebase';
 import { deleteObject, ref } from 'firebase/storage';
 import Image from 'next/image';
-
+import TimeAgo from 'timeago-react';
 
 
 const StatusPost = ({set,data,prop,id} ) => {
@@ -56,7 +56,11 @@ const StatusPost = ({set,data,prop,id} ) => {
           <Image width={50} height={50} src={data.photoURL} alt="" />
           <div>
             <p>{data.userName} </p>
-            <p>posted at</p>
+            <p>
+            {data.posted?.toDate() ? (
+                    <TimeAgo datetime={data.posted?.toDate().getTime()} />
+                  ) : null}
+            </p>
           </div>
         <Close onClick={()=>set(false)}/>
        {!prop.uid&&<Bin onClick={del}/>}

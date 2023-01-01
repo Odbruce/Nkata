@@ -95,12 +95,12 @@ const SideBar = () => {
     }
 
     if (!isAFriend(friendsUid) && friendsUid !== user.uid && resolvedIsUser) {
-      alert("request sent")
-      return addDoc(collection(db, "chat"), {
+     
+     return addDoc(collection(db, "chat"), {
         user: [user.uid, friendsUid],
         request: "pending",
         from: user.uid,
-      });
+      }).then( alert("Request sent"));
 
 
 
@@ -286,7 +286,6 @@ const ProfileWrap = styled.div`
 
 const Container=styled.div`
 margin-top:0.5rem;
-// background:#ECEBE9;
 padding:1rem 0.5rem;
 position:relative;
 cursor:pointer;
@@ -359,6 +358,7 @@ const SearchForm = styled.form`
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
+  z-index:0;
 
   label {
     font-size: clamp(9px, calc(7px + 0.5vw), 16px);

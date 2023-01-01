@@ -32,7 +32,7 @@ const Status = ({ userUid }) => {
 export default Status;
 
 const InputStoryWrap = styled.section`
-  background: rgba(0, 0, 0, 0.3);
+  background:#272727;
   width: 100vw;
   height: 100vh;
   position: fixed;

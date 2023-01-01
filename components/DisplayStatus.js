@@ -87,7 +87,7 @@ background:black;
 
 `
 const Wrap = styled.section`
-  background: rgba(0, 0, 0, 0.3);
+  background: #272727;
   width: 100vw;
   height: 100vh;
   position: fixed;

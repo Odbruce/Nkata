@@ -4,14 +4,20 @@ import React from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "../firebase";
 
-const IncomingCall = ({ msg, localConn, recipient }) => {
+const IncomingCall = ({ msg, localConn, localStream, recipient }) => {
   const [user] = useAuthState(auth);
+
+  console.log(localStream);
 
   const handle = async (e) => {
     if (e.target.textContent === "accept") {
-      const answer = await localConn.CreateAnswer();
+      const answer = await localConn.createAnswer();
       localConn.setLocalDescription(answer);
-
+      navigator.mediaDevices
+        .getUserMedia({ audio: true, video: { facingMode: "user" } })
+        .then(async (stream) => {
+          document.getElementById("userstream").srcObject = stream;
+        });
       await setDoc(
         doc(db, "users", recipient?.uid),
         {
@@ -24,6 +30,12 @@ const IncomingCall = ({ msg, localConn, recipient }) => {
       );
 
       document.getElementById("videoChat").style.display = "flex";
+      localConn.ontrack = (e) => {
+        if (
+          document.getElementById("recipientstream").srcObject !== e.streams[0]
+        )
+          document.getElementById("recipientstream").srcObject = e.streams[0];
+      };
     }
 
     return;
