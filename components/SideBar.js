@@ -23,6 +23,7 @@ import { signOut } from "firebase/auth";
 import { useRouter } from "next/router";
 import Image from "next/image";
 
+
 const SideBar = () => {
   const [user] = useAuthState(auth);
   const route = useRouter();
@@ -94,24 +95,20 @@ const SideBar = () => {
     }
 
     if (!isAFriend(friendsUid) && friendsUid !== user.uid && resolvedIsUser) {
+      alert("request sent")
       return addDoc(collection(db, "chat"), {
         user: [user.uid, friendsUid],
         request: "pending",
         from: user.uid,
       });
+
+
+
     }
     if (!resolvedIsUser) {
       return alert("user not found");
     }
   };
-
-  // const copy = () => {
-  //   const element = document.getElementById("span");
-  //   navigator.clipboard.writeText(element.textContent);
-
-  //   // Alert the copied text
-  //   alert("Copied : " + element.textContent);
-  // };
 
   const copy = () => {
     const element = document.getElementById("span");
@@ -132,9 +129,7 @@ const SideBar = () => {
             alt={user.displayName}
           />
           <h4>{user.displayName}</h4>
-          {/* <h4 onClick={copy}>
-            ID : <span id={"span"}>{user.uid}</span> <MdContentCopy />
-          </h4> */}
+         
           <Container>
               <h4 onClick={copy}>ID: <span id="span">{user?.uid}</span><MdContentCopy /></h4>
               <p id="p_copyy">copied!</p>

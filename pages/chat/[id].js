@@ -5,23 +5,108 @@ import SideBar from "../../components/SideBar"
 import RecipientProfile from "../../components/RecipientProfile"
 import { useAuthState } from "react-firebase-hooks/auth"
 import { auth, db } from "../../firebase";
-import { collection, doc, getDoc, getDocs, orderBy, query } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, onSnapshot, orderBy, query, setDoc } from "firebase/firestore";
 import { useDocument } from "react-firebase-hooks/firestore";
 import { useRouter } from "next/router";
+import VideoChat from "../../components/VideoChat";
+import { useEffect, useRef, useState } from "react";
+import IncomingCall from "../../components/IncomingCall";
 
 
 const Chat = ({chat,messages}) => {
   const [user] = useAuthState(auth);
-
-  // console.log(messages)
-
   const recipientId = (prop)=>{
-   return chat?.user?.find((item)=>item!==prop?.uid)
+    return chat?.user?.find((item)=>item!==prop?.uid)
+   }
+  // const [localConn,setLocalConn] = useState("");
+  const localConn = useRef("")
+  const [callOffer,setCallOffer] = useState("");
+  const [callmsg,setCallMsg] = useState("");
+
+
+console.log(localConn)
+
+const incoming = (msg)=>{
+  return setCallMsg(msg);
+}
+
+  const handleCall =(msg)=>{
+    console.log(`Message: ${msg?.type}`);
+  console.log(localConn.current.setRemoteDescription);
+  switch (msg?.type) {
+    case "offer":
+      // Set the remote description
+      console.log(localConn)
+      localConn.current.setRemoteDescription(new RTCSessionDescription(JSON.parse(msg?.typeData)));
+      console.log("calling")
+
+      localConn.onicecandidate = function(event){
+        if(event.candidate){
+            setDoc(doc(db,"users",msg?.from),{
+              type:"candidate",
+              typeData:JSON.stringify(event.candidate),
+              from:user?.uid,
+              fromName:user?.displayName
+            },{merge:true})
+        }
+        }
+
+      //display call
+          incoming(`incoming call from ${msg?.fromName}`)
+
+
+
+      // Create an answer
+      // localConn.createAnswer().then((answer) => {
+      //   console.log(`Answer: ${answer.sdp}`);
+      //   // Set the local description
+      //   localConn.setLocalDescription(answer).then(() => {
+      //     // Send the answer to the other peer
+      //     sendMessage(roomId, {
+      //       type: "answer",
+      //       sdp: answer.sdp,
+      //     });
+      //   });
+      // });
+      break;
+    case "answer":
+      // Set the remote description
+      localConn.setRemoteDescription(new RTCSessionDescription(msg));
+      break;
+    case "candidate":
+      // Add the ICE candidate
+      // localConn.addIceCandidate(new RTCIceCandidate(msg)).catch((error) => {
+      //   console.error(error);
+      // });
+      break;
   }
+  }
+
+  useEffect(()=>{
+
+    
+
+    onSnapshot(doc(db,"users",user?.uid),(snap)=>{
+      console.log(snap.data())
+      return handleCall(snap.data())
+    })
+  },[])
+
+  useEffect(()=>{
+    const config = {
+      iceServers:[{urls:"stun:stun2.1.google.com:19302"}]
+    }
+    const conn = new RTCPeerConnection(config);
+    localConn.current = conn;
+  },[])
+
+
 
   const userDetails = useDocument(doc(db,"users",recipientId(user)||"a"))
 
   const route = useRouter();
+
+  
 
 
   return (
@@ -33,11 +118,13 @@ const Chat = ({chat,messages}) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
     <Wrapper>
+      {callmsg&&<IncomingCall msg={callmsg}/>}
+        <VideoChat />
         <SideBar messages={messages} />
         <ChatDisplayWrap display={route.query.id}>
          {recipientId(user)&&<>
             <ChatComponent chat={chat} recipient={userDetails[0]?.data()} messages={messages} />
-             <RecipientProfile chat={chat} recipient={userDetails[0]?.data()} messages={messages} />
+             <RecipientProfile chat={chat} localConn={localConn.current}  recipient={userDetails[0]?.data()} messages={messages} />
             </> 
             }
             </ChatDisplayWrap>

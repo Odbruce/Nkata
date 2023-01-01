@@ -37,9 +37,9 @@ const InputStoryWrap = styled.section`
   height: 100vh;
   position: fixed;
   display: none;
-  justify-content: center;
-  backdrop-filter: blur(3px);
   top: 0;
   left: 0;
+  justify-content: center;
+  backdrop-filter: blur(3px);
   z-index: 15;
 `;

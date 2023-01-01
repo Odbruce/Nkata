@@ -360,6 +360,7 @@ const InputWrapper = styled.div`
   height: var(--display_scrn);
   font-size: clamp(12px, calc(8px + 2vw), 20px);
 
+
   .active {
     transform: scaleX(1) scaleY(1);
     opacity: 1;
@@ -372,7 +373,6 @@ const InputWrapper = styled.div`
   transform-origin: left bottom;
   width: 100px;
   height: 60px;
-  background: whitesmoke;
   font-size: 25px;
   display: flex;
   justify-content: space-around;

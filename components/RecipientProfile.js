@@ -7,15 +7,62 @@ import {BsImages,BsCameraVideoFill} from "react-icons/bs"
 import {FiVideo} from "react-icons/fi"
 import {AiOutlineAudio} from "react-icons/ai"
 import {GrFormClose} from "react-icons/gr"
-import { collection, orderBy, query } from 'firebase/firestore'
+import { collection, doc, orderBy, query, setDoc } from 'firebase/firestore'
 import { useRouter } from 'next/router'
 import { useCollection } from 'react-firebase-hooks/firestore'
-import { db } from '../firebase'
+import { auth, db } from '../firebase'
+import { useAuthState } from 'react-firebase-hooks/auth'
 
-const RecipientProfile = ({recipient,messages}) => {
+const RecipientProfile = ({recipient,messages,localConn}) => {
   const route = useRouter()
   const chatRef = collection(db, "chat");
 
+  const [user] = useAuthState(auth)
+
+
+
+  const startcall=()=>{
+      document.getElementById("videoChat").style.display="flex";
+      navigator.mediaDevices.getUserMedia({ audio: true,  video: { facingMode: "user" } })
+.then(async (stream) => {
+
+  localConn.addStream(stream);
+    
+  
+  // localConn.addStream(stream)
+// Add the stream to the peer connection
+// peerConnection.addStream(stream);
+
+// Attach the stream to a video element to display it
+const videoElement = document.getElementById("userstream");
+videoElement.srcObject = stream;
+
+const offer = await localConn.createOffer();
+await localConn.setLocalDescription(offer)
+
+await setDoc(doc(db,"users",recipient?.uid),{
+      type:"offer",
+      typeData:JSON.stringify(offer),
+      from:user?.uid,
+      fromName:user?.displayName
+},{merge:true})
+
+localConn.onicecandidate = function(event){
+  if(event.candidate){
+      setDoc(doc(db,"users",recipient?.uid),{
+        type:"candidate",
+        typeData:JSON.stringify(event.candidate),
+        from:user?.uid,
+        fromName:user?.displayName
+      },{merge:true})
+  }
+  }
+  
+
+
+
+})
+}
 
   const [messageSnap] = useCollection(query(collection(chatRef,route.query.id,"message"),orderBy("posted","asc")));
 
@@ -72,8 +119,8 @@ return  setTimeout(()=>
       </ProfileWrap>
 
       <CallWrap>
-        <MdAddIcCall/>
-        <BsCameraVideoFill/>
+        <MdAddIcCall />
+        <BsCameraVideoFill onClick={startcall}/>
       </CallWrap>
             <Container>
               <h4 onClick={copy}>ID: <span id="span">{recipient?.uid}</span><MdContentCopy /></h4>
