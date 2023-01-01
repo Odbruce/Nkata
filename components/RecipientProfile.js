@@ -87,7 +87,7 @@ return  setTimeout(()=>
                 <MediaWrap>
                  
                   {filterByType("image",messages).map((msg)=>{
-                    return <Image onClick={()=>scrollToMsg(msg.id,msg.uid)} width={70} height={50} src={msg?.url} alt={msg?.displayName}/>
+                    return <Image key={msg.id} onClick={()=>scrollToMsg(msg.id,msg.uid)} width={70} height={50} src={msg?.url} alt={msg?.displayName}/>
                   })}
                 </MediaWrap>
 
@@ -100,7 +100,7 @@ return  setTimeout(()=>
                   <MediaWrap>
                     
                     {filterByType("video",messages).map((msg)=>{
-                      return <video  onClick={()=>scrollToMsg(msg.id,msg.uid)} width={70} height={50} src={msg.url} alt={msg.displayName}/>
+                      return <video key={msg.id} onClick={()=>scrollToMsg(msg.id,msg.uid)} width={70} height={50} src={msg.url} alt={msg.displayName}/>
                     })}
                   </MediaWrap>
                 </Wrapped>
