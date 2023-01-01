@@ -5,7 +5,7 @@ const Loading = () => {
   return (
     <Wrapper>
       <div>
-        <h1>NKATA</h1>
+        <h1>{'NK\u00C1T\u00C0'}</h1>
       </div>
     </Wrapper>
   );

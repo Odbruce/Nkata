@@ -1,9 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import styled from "@emotion/styled";
 import AddMediaToChat from "./AddMediaToChat";
 import Messages from "./Messages";
 import { BiImageAdd } from "react-icons/bi";
-import { AiOutlineVideoCameraAdd } from "react-icons/ai";
+import { AiOutlineVideoCameraAdd,AiOutlineSend } from "react-icons/ai";
 import { IoIosArrowBack } from "react-icons/io";
 import { ImAttachment } from "react-icons/im";
 import { MdOutlineKeyboardVoice } from "react-icons/md";
@@ -26,8 +26,52 @@ import TimeAgo from "timeago-react";
 import Image from "next/image";
 
 const ChatComponent = ({ chat, recipient, messages }) => {
+  
+  const [error, setError] = useState(false);
+  
+  
   const [user] = useAuthState(auth);
+
   const route = useRouter();
+
+  const [inputMedia,setInput] = useState("");
+
+  const inputHandle = (e)=>{
+    setInput(e.target.files[0])
+    const vid_display = document.getElementById('vidd');
+    const img_display = document.getElementById('imgg');
+    const inputVid = document.getElementById("video_chat")
+  const inputImg = document.getElementById("img_chat")
+
+
+    if(e.target.files[0].type.includes("video")){
+      
+      if(e.target.files[0].size>2000000){
+          inputVid.value="";
+          inputImg.value="";
+          setError(true);
+          
+          setTimeout(() => {
+            setError(false);
+          }, 4000);
+      }
+      else{
+     document.getElementById("addMediaToChat").style.transform="scaleY(1) scaleX(1) translateY(0)";
+    vid_display.src=URL.createObjectURL(e.target.files[0])
+    vid_display.alt=e.target.files[0].name;
+    vid_display.style.display="initial";
+    img_display.style.display="none";}
+  }
+  else{
+    document.getElementById("addMediaToChat").style.transform="scaleY(1) scaleX(1) translateY(0)";
+    img_display.src=URL.createObjectURL(e.target.files[0]);
+    img_display.alt=e.target.files[0].name;
+    img_display.style.display="initial";
+    vid_display.style.display="none";
+  }
+  document.getElementById("attach").classList.remove("active")
+
+  }
 
   const chatRef = collection(db, "chat");
 
@@ -38,17 +82,17 @@ const ChatComponent = ({ chat, recipient, messages }) => {
     )
   );
 
-  console.log(messageSnap);
   const getMessages = () => {
     if (messageSnap) {
       return messageSnap.docs.map((msg,index) => {
         if (msg.data().uid !== recipient?.uid) {
+
           return (
-            <MsgWrapRight key={index}>
-              <Messages user={recipient.uid} messages={msg.data()} />
+            <MsgWrapRight id={msg.id} key={index}>
+              <Messages user={recipient.uid} messages={{...msg.data(),posted:msg.data().posted?.toDate().getTime()}} />
               <p>
                 {msg.data().posted?.toDate() ? (
-                  <TimeAgo datetime={msg.data().posted?.toDate()} />
+                  <TimeAgo datetime={msg.data().posted?.toDate().getTime()} />
                 ) : null}
               </p>
             </MsgWrapRight>
@@ -57,13 +101,13 @@ const ChatComponent = ({ chat, recipient, messages }) => {
           return (
             <LeftWrap key={index}>
               <div className="msg_cont">
-              <Image fill src={msg.data().photoURL} alt={msg.data().displayName} />
+              <Image size={50} fill src={msg.data()?.photoURL} alt={msg.data()?.displayName} />
               </div>
-              <MsgWrapLeft>
-                <Messages user={recipient.uid} messages={msg.data()} />
+              <MsgWrapLeft id={msg.id}>
+                <Messages user={recipient.uid} messages={{...msg.data(),posted:msg.data().posted.toDate().getTime()}} />
                 <p>
                   {msg.data().posted?.toDate() ? (
-                    <TimeAgo datetime={msg.data().posted?.toDate()} />
+                    <TimeAgo datetime={msg.data().posted?.toDate().getTime()} />
                   ) : null}
                 </p>
               </MsgWrapLeft>
@@ -74,27 +118,28 @@ const ChatComponent = ({ chat, recipient, messages }) => {
     } else {
       return JSON.parse(messages).map((msg,index) => {
         if (msg.uid !== recipient?.uid) {
+          
           return (
-            <MsgWrapRight key={index}>
-              <Messages user={recipient.uid} messages={msg} />
+            <MsgWrapRight id={msg.id} key={index}>
+              <Messages user={recipient?.uid} messages={msg} />
               <p>
-                {msg.posted?.toDate() ? (
-                  <TimeAgo datetime={msg.posted?.toDate()} />
+                {msg.posted ? (
+                  <TimeAgo datetime={msg.posted} />
                 ) : null}
               </p>
             </MsgWrapRight>
           );
         } else {
           return (
-            <LeftWrap key={index}>
+            <LeftWrap  key={index}>
               <div className="msg_cont">
-              <Image fill src={msg.photoURL} alt={msg.displayName} />
+              <Image size={50} fill src={msg?.photoURL} alt={msg?.displayName} />
               </div>
-              <MsgWrapLeft>
-                <Messages user={recipient.uid} messages={msg} />
+              <MsgWrapLeft id={msg.id}>
+                <Messages user={recipient?.uid} messages={msg} />
                 <p>
-                  {msg.posted?.toDate() ? (
-                    <TimeAgo datetime={msg.posted?.toDate()} />
+                  {msg.posted ? (
+                    <TimeAgo datetime={msg.posted} />
                   ) : null}
                 </p>
               </MsgWrapLeft>
@@ -128,6 +173,15 @@ const ChatComponent = ({ chat, recipient, messages }) => {
 
   return (
     <Wrapper>
+       <ErrorWrap>
+            <div className={`issuccessModal ${error ? "success" : null}`}>
+              <h4>File too large.</h4>
+              <div>
+              <Image width={25} height={25} src="https://emojipedia-us.s3.amazonaws.com/source/microsoft-teams/337/unamused-face_1f612.png" alt="smiley"/>
+              <p>Its a demo</p>
+              </div>
+            </div>
+    </ErrorWrap>
       <ChatHeader>
         <ProfileWrap>
           <div>
@@ -135,7 +189,7 @@ const ChatComponent = ({ chat, recipient, messages }) => {
             <h6 onClick={() => route.push("/chat/_blank_")}>back</h6>
           </div>
           <ImgWrapper>
-            <Image fill src={recipient?.photoURL} alt={recipient?.displayName} />
+            <Image fill size={50} src={recipient?.photoURL} alt={recipient?.displayName} />
           </ImgWrapper>
           <p>
             last seen :{" "}
@@ -145,23 +199,23 @@ const ChatComponent = ({ chat, recipient, messages }) => {
           </p>
         </ProfileWrap>
         <ChatIcons>
-          <BsThreeDots />
+          <BsThreeDots onClick={()=>document.getElementById("recipientID").classList.add("active")}/>
         </ChatIcons>
       </ChatHeader>
       <ChatDisplay>
         {getMessages()}
-        <AddMediaToChat />
+        <AddMediaToChat chatRef={chatRef} user={user} />
       </ChatDisplay>
       <InputWrapper>
         <MediaWrap id="attach">
           <label htmlFor="img_chat">
             <ImageAdd />
           </label>
-          <input type="file" hidden accept="image/*" id="img_chat" />
+          <input type="file" onChange={inputHandle} hidden accept="image/*" id="img_chat" />
           <label htmlFor="video_chat">
             <VideoaAdd />
           </label>
-          <input type="file" hidden accept="video/*" id="video_chat" />
+          <input type="file" onChange={inputHandle} hidden accept="video/*" id="video_chat" />
         </MediaWrap>
         <ImAttachment
           onClick={() =>
@@ -170,7 +224,7 @@ const ChatComponent = ({ chat, recipient, messages }) => {
         />
         <ChatForm onSubmit={sendMessage}>
           <input type="text" placeholder="write a message ..." name="" id="" />
-          <button hidden></button>
+          <button> <AiOutlineSend/></button>
         </ChatForm>
         <BsEmojiSmileUpsideDown />
         <MdOutlineKeyboardVoice />
@@ -186,6 +240,55 @@ const Wrapper = styled.section`
   flex: 2;
   position: sticky;
   top: 0;
+  border-right:1px solid grey;
+
+  @media(max-width:820px){
+    border-right:none;
+  }
+`;
+
+const ErrorWrap = styled.div`
+  .issuccessModal {
+    position: fixed;
+    font-family: "Segoe UI";
+    font-size: clamp(9px, calc(7px + 0.5vw), 16px);
+    letter-spacing: 1px;
+    z-index: 5;
+    right: 0;
+    left: 0;
+    top: 50px;
+    opacity: 0;
+    margin: 0 auto;
+    width: max(20vw, 150px);
+    background: whitesmoke;
+    text-align: center;
+    padding: 1vw;
+    box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.2);
+    transition: 0.3s;
+    transition-property: opacity top;
+    font-weight: 500;
+    color: var(--font_pri);
+
+    h4{
+      text-align:start;
+      font-size:14px;
+    }
+    p{
+      font-size:10px;
+    }
+
+
+    div{
+      display:flex;
+      align-items:flex-end;
+      gap:10px;
+    }
+  }
+
+  .success {
+    top: 10px;
+    opacity: 1;
+  }
 `;
 const ChatHeader = styled.nav`
   display: flex;
@@ -242,6 +345,10 @@ const ImgWrapper = styled.div`
 `;
 const ChatIcons = styled.div`
   display: flex;
+
+  @media(min-width:830px){
+    display:none;
+  }
 `;
 const InputWrapper = styled.div`
   display: flex;
@@ -300,14 +407,25 @@ const ChatForm = styled.form`
   width: 90%;
   display: flex;
   height: 100%;
+  position:relative;
+  
 
   input {
     border: none;
-    padding: 0 0.4em;
+    padding: 0 2vw 0 0.4em;
     background: transparent;
     outline: none;
     font-family: "Segoe UI";
     width: 100%;
+  }
+
+  button{
+    position:absolute;
+    border:none;
+    background:transparent;
+    top:50%;
+    transform:translateY(-25%);
+    right:2%;
   }
 `;
 const ChatDisplay = styled.article`
@@ -362,6 +480,10 @@ const MsgWrapLeft = styled(MsgWrap)`
   color: #272727;
   position: relative;
 
+  p{
+    font-size:14px;
+  }
+
   p:nth-of-type(2) {
     position: absolute;
     bottom: -1.3em;
@@ -373,11 +495,12 @@ const MsgWrapLeft = styled(MsgWrap)`
 
 const MsgWrapRight = styled(MsgWrap)`
   align-self: flex-end;
-  background: rgb(128, 0, 128, 0.8);
-  background: black;
   background: linear-gradient(73deg, #861657, #ffa69e);
   color: whitesmoke;
   opacity: 0.7;
+  p{
+    font-size:14px;
+  }
 
   p:nth-of-type(2) {
     min-width: 100px;

@@ -43,7 +43,16 @@ const Login = () => {
     const provider = new GoogleAuthProvider();
 
     try{
-    await signInWithPopup(auth, provider)    
+    const result = await signInWithPopup(auth, provider);
+    await setDoc(doc(db,"users",result.user.uid),
+    {
+      displayName:result.user.displayName,
+      photoURL:result.user.photoURL,
+      email:result.user.email,
+      uid:result.user.uid,
+    }
+  );
+
     }
 
     catch(e){
@@ -81,7 +90,6 @@ const Login = () => {
           Password
         );
 
-        console.log(result.user.uid)
         const storageRef = ref(storage, Email);
         const profileref = ref(storage, "profile_pic.png");
 
@@ -134,7 +142,7 @@ const Login = () => {
   return (
     <>
       <Head>
-        <title>Nkata</title>
+        <title>{'NK\u00C1T\u00C0'}</title>
         <meta name="description" content="Chat your experience" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
@@ -159,7 +167,7 @@ const Login = () => {
             </div>
           </ErrorWrap>
           <SocialWrapper>
-            <h1>NKATA</h1>
+            <h1>{'NK\u00C1T\u00C0'}</h1>
             <Social>
               <button onClick={googleSignIn}>
                 <div>
@@ -360,7 +368,10 @@ const SocialWrapper = styled.div`
     letter-spacing: max(1.2vw, 12px);
     font-size: clamp(32px, calc(4vw + 10px), 72px);
     padding-left: max(1.2vw, 12px);
+
+    
   }
+
   p {
     font-size: clamp(9px, calc(7px + 0.5vw), 16px);
     margin-bottom: 1rem;

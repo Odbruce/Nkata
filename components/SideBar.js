@@ -105,12 +105,20 @@ const SideBar = () => {
     }
   };
 
+  // const copy = () => {
+  //   const element = document.getElementById("span");
+  //   navigator.clipboard.writeText(element.textContent);
+
+  //   // Alert the copied text
+  //   alert("Copied : " + element.textContent);
+  // };
+
   const copy = () => {
     const element = document.getElementById("span");
     navigator.clipboard.writeText(element.textContent);
+    document.getElementById("p_copyy").style.opacity=1;
 
-    // Alert the copied text
-    alert("Copied : " + element.textContent);
+    return setTimeout(()=>document.getElementById("p_copy").style.opacity=0,2000);
   };
 
   return (
@@ -124,9 +132,13 @@ const SideBar = () => {
             alt={user.displayName}
           />
           <h4>{user.displayName}</h4>
-          <h4 onClick={copy}>
+          {/* <h4 onClick={copy}>
             ID : <span id={"span"}>{user.uid}</span> <MdContentCopy />
-          </h4>
+          </h4> */}
+          <Container>
+              <h4 onClick={copy}>ID: <span id="span">{user?.uid}</span><MdContentCopy /></h4>
+              <p id="p_copyy">copied!</p>
+            </Container>
           <h4 onClick={() => signOut(auth)}>
             sign out
             <AiOutlineLogout className="out" />
@@ -231,7 +243,7 @@ const ProfileWrap = styled.div`
   background: grey;
   align-items: flex-start;
   transition: 0.3s;
-  border-radius: 10px;
+  border-radius: 5px;
   background: #e5e5e5;
   box-shadow: inset 5px 5px 20px #b9b9b9, inset -5px -5px 20px #ffffff;
   color: #272727;
@@ -261,6 +273,9 @@ const ProfileWrap = styled.div`
 
     span {
       background: whitesmoke;
+      color:grey;
+      // font-weight:400;
+      font-size:12px;
     }
 
     :nth-of-type(2) {
@@ -273,6 +288,40 @@ const ProfileWrap = styled.div`
     }
   }
 `;
+
+const Container=styled.div`
+margin-top:0.5rem;
+// background:#ECEBE9;
+padding:1rem 0.5rem;
+position:relative;
+cursor:pointer;
+
+p{
+  position:absolute;
+  top:50%;
+  transition:0.3s;
+  opacity:0;
+  right:15%;
+  color:grey;
+  font-size:10px;
+
+  @media(min-width:830px){
+    top:70%;
+  }
+}
+
+h4{
+  font-size:0.8rem;
+  display:flex;
+  align-items:center;
+  gap:0.8rem;
+}
+
+span{
+  font-size:12px;
+  color:grey;
+}
+`
 
 const AddFriend = styled.div`
   padding: 0.5em;

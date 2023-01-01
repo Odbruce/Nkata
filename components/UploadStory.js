@@ -132,7 +132,7 @@ const UploadStory = () => {
       </Header>
       <Screen id="str_screen">
         {Input?.type?.includes("image") ? (
-          <Image fill src={URL.createObjectURL(Input)} alt="" />
+          <Image fill src={URL.createObjectURL(Input)} alt={Input.name} />
         ) : Input?.type?.includes("video") ? (
           <video id="str_video" autoPlay playsInline loop muted>
             <source type="video/mp4" src={URL.createObjectURL(Input)} />
