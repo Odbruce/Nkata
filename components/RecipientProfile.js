@@ -26,6 +26,7 @@ const RecipientProfile = ({recipient,messages,localConn}) => {
       navigator.mediaDevices.getUserMedia({ audio: true,  video: { facingMode: "user" } })
 .then(async (stream) => {
 
+
   localConn.addStream(stream);
     
   

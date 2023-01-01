@@ -1,9 +1,29 @@
 import styled from "@emotion/styled";
+import { setDoc } from "firebase/firestore";
 import React from "react";
+import { useAuthState } from "react-firebase-hooks/auth";
+import { auth } from "../firebase";
 
-const IncomingCall = ({ msg }) => {
-  const handle = (e) => {
+const IncomingCall = ({ msg, localConn, recipient }) => {
+  const [user] = useAuthState(auth);
+
+  const handle = async (e) => {
     if (e.target.textContent === "accept") {
+      const answer = await localConn.CreateAnswer();
+      localConn.setLocalDescription(answer);
+
+      await setDoc(
+        doc(db, "users", recipient?.uid),
+        {
+          type: "answer",
+          typeData: JSON.stringify(answer),
+          from: user?.uid,
+          fromName: user?.displayName,
+        },
+        { merge: true }
+      );
+
+      document.getElementById("videoChat").style.display = "flex";
     }
 
     return;

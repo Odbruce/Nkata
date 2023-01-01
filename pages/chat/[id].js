@@ -19,7 +19,8 @@ const Chat = ({chat,messages}) => {
     return chat?.user?.find((item)=>item!==prop?.uid)
    }
   // const [localConn,setLocalConn] = useState("");
-  const localConn = useRef("")
+  const localConn = useRef("");
+  const localStream = useRef("");
   const [callOffer,setCallOffer] = useState("");
   const [callmsg,setCallMsg] = useState("");
 
@@ -35,6 +36,11 @@ const incoming = (msg)=>{
   console.log(localConn.current.setRemoteDescription);
   switch (msg?.type) {
     case "offer":
+      navigator.mediaDevices.getUserMedia({ audio: true,  video: { facingMode: "user" } })
+      .then(async (stream) => {
+        localStream.current=stream;
+        localConn.current.addStream(stream)
+      })
       // Set the remote description
       console.log(localConn)
       localConn.current.setRemoteDescription(new RTCSessionDescription(JSON.parse(msg?.typeData)));
@@ -71,21 +77,18 @@ const incoming = (msg)=>{
       break;
     case "answer":
       // Set the remote description
-      localConn.setRemoteDescription(new RTCSessionDescription(msg));
+      localConn.setRemoteDescription(new RTCSessionDescription(JSON.parse(msg?.typeData)));
       break;
     case "candidate":
       // Add the ICE candidate
-      // localConn.addIceCandidate(new RTCIceCandidate(msg)).catch((error) => {
-      //   console.error(error);
-      // });
+      localConn.addIceCandidate(new RTCIceCandidate(JSON.parse(msg?.typeData))).catch((error) => {
+        console.error(error);
+      });
       break;
   }
   }
 
   useEffect(()=>{
-
-    
-
     onSnapshot(doc(db,"users",user?.uid),(snap)=>{
       console.log(snap.data())
       return handleCall(snap.data())
@@ -118,7 +121,7 @@ const incoming = (msg)=>{
         <link rel="icon" href="/favicon.ico" />
       </Head>
     <Wrapper>
-      {callmsg&&<IncomingCall msg={callmsg}/>}
+      {callmsg&&<IncomingCall localConn={localConn.current} recipient={userDetails[0]?.data()} msg={callmsg}/>}
         <VideoChat />
         <SideBar messages={messages} />
         <ChatDisplayWrap display={route.query.id}>
