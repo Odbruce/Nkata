@@ -249,7 +249,8 @@ const delVn = ()=>{
 const sendVn = ()=>{
 
   const storageRef = ref(storage,`new vn ${serverTimestamp()}` );
-  const uploadTask = uploadBytesResumable(storageRef, audioData.current);
+  const audioFile = new File(recordedBlobs, 'audio.webm');
+  const uploadTask = uploadBytesResumable(storageRef, audioFile);
   uploadTask.on("state_changed", null, null, () => {
     getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
 

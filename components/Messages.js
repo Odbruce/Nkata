@@ -25,6 +25,8 @@ useEffect(()=>{
 msgRef.current?.scrollIntoView({behavior:"smooth"})
 },[messages])
 
+messages?.url
+
 if(messages?.type?.includes("audio")){
   return <>
   <MediaWrap>

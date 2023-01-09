@@ -53,9 +53,9 @@ const StatusPost = ({set,data,prop,id} ) => {
   return (
     <StatusConc multiple={count} >
         <Header>
-          <Image width={50} height={50} src={data.photoURL} alt="status" />
+          <Image width={50} height={50} src={data?.photoURL} alt="status" />
           <div>
-            <p>{data.userName} </p>
+            <p>{data?.userName} </p>
             <p>
             {data.posted?.toDate() ? (
                     <TimeAgo datetime={data.posted?.toDate().getTime()} />
@@ -65,19 +65,19 @@ const StatusPost = ({set,data,prop,id} ) => {
         <Close onClick={()=>set(false)}/>
        {!prop.uid&&<Bin onClick={del}/>}
         </Header>
-        <Screen style={{backgroundColor:data.background}}>
-        {data.type.includes("image") ? (
-          <Image fill src={data.data} alt={data.name} />
-        ) : data.type.includes("video") ? (
+        <Screen style={{backgroundColor:data?.background}}>
+        {data?.type.includes("image") ? (
+          <Image fill src={data.data} alt={data?.name} />
+        ) : data?.type.includes("video") ? (
           <video id="str_video" autoPlay playsInline loop muted>
-            <source type="video/mp4" src={data.data} />
+            <source type="video/mp4" src={data?.data} />
             your brower doesnt support html video
           </video>
         ) : (
-          <h2>{data.Text}</h2>
+          <h2>{data?.Text}</h2>
         )}
         </Screen>
-        <Caption>{data.caption}</Caption>
+        <Caption>{data?.caption}</Caption>
       </StatusConc>
   )
 }
