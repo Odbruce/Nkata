@@ -172,7 +172,7 @@ const ChatComponent = ({ chat, recipient, messages }) => {
   };
 
   const audio = useRef("")
-  const audioData = useRef("")
+  const audioData = useRef([])
   const audRef = useRef(null)
 
 
@@ -222,9 +222,12 @@ const displayCount = ()=>{
 
       setTimeout(()=>mediaRecorder.state!=="inactive"?mediaRecorder.stop():null,60000);
       
-
+      
       mediaRecorder.ondataavailable = function(e) {
-        audioData.current = e.data
+        // audioData.current = e.data
+        if (e.data && e.data.size > 0) {
+          audioData.current.push(e.data);
+        }
         const aud = window.URL.createObjectURL(e.data)
         setRecord("pending");
          audRef.current.src=aud;
@@ -249,7 +252,7 @@ const delVn = ()=>{
 const sendVn = ()=>{
 
   const storageRef = ref(storage,`new vn ${serverTimestamp()}` );
-  const audioFile = new File(audioData.current, 'audio.webm');
+  const audioFile = new Blob(audioData.current, 'audio.mpeg');
   const uploadTask = uploadBytesResumable(storageRef, audioFile);
   uploadTask.on("state_changed", null, null, () => {
     getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
