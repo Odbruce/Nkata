@@ -330,6 +330,8 @@ const AddFriend = styled.div`
 
 const StatusWrapper = styled.ul`
   display: grid;
+  position:relative;
+  z-index:15;
   list-style: none;
   width: 100%;
   padding: 0 1rem;
@@ -358,7 +360,6 @@ const SearchForm = styled.form`
   margin-bottom: 1rem;
   display: flex;
   align-items: center;
-  z-index:0;
 
   label {
     font-size: clamp(9px, calc(7px + 0.5vw), 16px);

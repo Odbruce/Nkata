@@ -53,7 +53,7 @@ const StatusPost = ({set,data,prop,id} ) => {
   return (
     <StatusConc multiple={count} >
         <Header>
-          <Image width={50} height={50} src={data.photoURL} alt="" />
+          <Image width={50} height={50} src={data.photoURL} alt="status" />
           <div>
             <p>{data.userName} </p>
             <p>

@@ -28,7 +28,7 @@ if(storySnap?.empty){
       <DisplayStatus uid={uid} set={setShow}/>
     </Wrap>}
     <Wrapper  >
-      <Image fill src={snap?.data().photoURL} alt="" onClick={()=>setShow(true)} />
+      <Image fill src={snap?.data().photoURL} alt="status" onClick={()=>setShow(true)} />
     </Wrapper>
     </>
 }

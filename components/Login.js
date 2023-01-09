@@ -357,7 +357,7 @@ const MainForm = styled.div`
   margin-bottom: 0.5rem;
 `;
 const SocialWrapper = styled.div`
-  padding: 0 2vw;
+  padding:2vw 2vw 0;
   position: relative;
   z-index: 1;
   color: whitesmoke;

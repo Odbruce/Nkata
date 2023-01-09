@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import styled from "@emotion/styled";
 import AddMediaToChat from "./AddMediaToChat";
 import Messages from "./Messages";
 import { BiImageAdd } from "react-icons/bi";
 import { AiOutlineVideoCameraAdd,AiOutlineSend } from "react-icons/ai";
 import { IoIosArrowBack } from "react-icons/io";
-import { ImAttachment } from "react-icons/im";
-import { MdOutlineKeyboardVoice } from "react-icons/md";
-import { BsEmojiSmileUpsideDown } from "react-icons/bs";
-import { BsThreeDots } from "react-icons/bs";
+import { ImAttachment,ImBin } from "react-icons/im";
+import { MdOutlineKeyboardVoice,MdSend } from "react-icons/md";
+import { BsEmojiSmileUpsideDown,BsStopCircleFill,BsFillPlayFill,BsThreeDots } from "react-icons/bs";
+// import { BsThreeDots } from "react-icons/bs";
 import { useCollection } from "react-firebase-hooks/firestore";
 import {
   addDoc,
@@ -19,7 +19,9 @@ import {
   serverTimestamp,
   setDoc,
 } from "firebase/firestore";
-import { auth, db } from "../firebase";
+import { getDownloadURL, ref, uploadBytesResumable } from "firebase/storage";
+
+import { auth, db,storage } from "../firebase";
 import { useRouter } from "next/router";
 import { useAuthState } from "react-firebase-hooks/auth";
 import TimeAgo from "timeago-react";
@@ -34,10 +36,8 @@ const ChatComponent = ({ chat, recipient, messages }) => {
 
   const route = useRouter();
 
-  const [inputMedia,setInput] = useState("");
 
   const inputHandle = (e)=>{
-    setInput(e.target.files[0])
     const vid_display = document.getElementById('vidd');
     const img_display = document.getElementById('imgg');
     const inputVid = document.getElementById("video_chat")
@@ -60,7 +60,7 @@ const ChatComponent = ({ chat, recipient, messages }) => {
     vid_display.src=URL.createObjectURL(e.target.files[0])
     vid_display.alt=e.target.files[0].name;
     vid_display.style.display="initial";
-    img_display.style.display="none";}
+    img_display.style.display="none"}
   }
   else{
     document.getElementById("addMediaToChat").style.transform="scaleY(1) scaleX(1) translateY(0)";
@@ -89,7 +89,7 @@ const ChatComponent = ({ chat, recipient, messages }) => {
 
           return (
             <MsgWrapRight id={msg.id} key={index}>
-              <Messages user={recipient.uid} messages={{...msg.data(),posted:msg.data().posted?.toDate().getTime()}} />
+              <Messages user={recipient?.uid} messages={{...msg.data(),posted:msg.data().posted?.toDate().getTime()}} />
               <p>
                 {msg.data().posted?.toDate() ? (
                   <TimeAgo datetime={msg.data().posted?.toDate().getTime()} />
@@ -104,7 +104,7 @@ const ChatComponent = ({ chat, recipient, messages }) => {
               <Image size={50} fill src={msg.data()?.photoURL} alt={msg.data()?.displayName} />
               </div>
               <MsgWrapLeft id={msg.id}>
-                <Messages user={recipient.uid} messages={{...msg.data(),posted:msg.data().posted.toDate().getTime()}} />
+                <Messages user={recipient?.uid} messages={{...msg.data(),posted:msg.data().posted.toDate().getTime()}} />
                 <p>
                   {msg.data().posted?.toDate() ? (
                     <TimeAgo datetime={msg.data().posted?.toDate().getTime()} />
@@ -171,6 +171,116 @@ const ChatComponent = ({ chat, recipient, messages }) => {
     }).then((e.target[0].value = ""));
   };
 
+  const audio = useRef("")
+  const audioData = useRef("")
+  const audRef = useRef(null)
+
+  const audioRef = document.getElementById("audio");
+
+const [recordd,setRecord] = useState("")
+
+const displayCount = ()=>{
+
+  let countdown = 0;
+  
+  let countdownTimer = document.getElementById("counter");
+  
+  let timer = setInterval(function() {
+    countdown++;
+  
+    if (countdown === 60) {
+      clearInterval(timer);
+    }
+  
+    let minutes = Math.floor(countdown / 60);
+    let seconds = countdown % 60;
+    if (minutes < 10) {
+      minutes = "0" + minutes;
+    }
+    if (seconds < 10) {
+      seconds = "0" + seconds;
+    }
+    let clock = minutes + ":" + seconds;
+  
+    countdownTimer.innerHTML = clock;
+  }, 1000);
+}
+
+  const record = ()=>{
+    
+    setRecord("recording");
+
+    const audioRef = document.getElementById("audio");
+
+    navigator.mediaDevices.getUserMedia({ audio: true })
+    .then(async (stream) => {
+     
+      const mediaRecorder = new MediaRecorder(stream);
+      audio.current = mediaRecorder;
+
+      mediaRecorder.start();
+
+      displayCount();
+
+      setTimeout(()=>mediaRecorder.state!=="inactive"?mediaRecorder.stop():null,60000);
+      
+
+      mediaRecorder.ondataavailable = function(e) {
+        audioData.current = e.data
+        const aud = window.URL.createObjectURL(e.data)
+        setRecord("pending");
+         audRef.current.src=aud;
+      }
+
+    
+
+      console.log("recorder started");
+      
+      
+    })
+  }
+const click = ()=>{
+  return audio.current.stop()
+}
+
+const delVn = ()=>{
+  setRecord("");
+  return audRef.current.src="";
+}
+
+const sendVn = ()=>{
+
+  const storageRef = ref(storage,`new vn ${serverTimestamp()}` );
+  const uploadTask = uploadBytesResumable(storageRef, audioData.current);
+  uploadTask.on("state_changed", null, null, () => {
+    getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+
+      setDoc(
+        doc(db, "users", user?.uid),
+        {
+          lastSeen: serverTimestamp(),
+        },
+        { merge: true }
+      );
+
+      await addDoc(collection(chatRef,route.query.id,"message"),{
+        posted: serverTimestamp(),
+        message: "",
+        uid: user?.uid,
+        photoURL: user?.photoURL,
+        displayName: user?.displayName,
+        url:downloadURL,
+        fileName:"audio",
+        type:audioData.current.type,
+      }
+      ).then((delVn()))
+
+    })})
+  
+
+  return;
+}
+
   return (
     <Wrapper>
        <ErrorWrap>
@@ -213,7 +323,7 @@ const ChatComponent = ({ chat, recipient, messages }) => {
           </label>
           <input type="file" onChange={inputHandle} hidden accept="image/*" id="img_chat" />
           <label htmlFor="video_chat">
-            <VideoaAdd />
+            <VideoAdd />
           </label>
           <input type="file" onChange={inputHandle} hidden accept="video/*" id="video_chat" />
         </MediaWrap>
@@ -226,8 +336,27 @@ const ChatComponent = ({ chat, recipient, messages }) => {
           <input type="text" placeholder="write a message ..." name="" id="" />
           <button> <AiOutlineSend/></button>
         </ChatForm>
-        <BsEmojiSmileUpsideDown />
-        <MdOutlineKeyboardVoice />
+        <MdOutlineKeyboardVoice onClick={record} />
+       { recordd&&<Recorded id="recordDisplay">
+          { recordd==="recording"?<div>
+            <MdOutlineKeyboardVoice />
+            <p id="counter">0:00</p>
+          </div>
+          :null
+        }
+        <audio controls src="" style={{visibility:recordd==="pending"?"visible":"hidden"}} ref={audRef}></audio>
+
+
+          <div >
+              {recordd==="recording"&&<Stop id="stop" onClick={click} />
+             
+              }
+              {recordd==="pending"?<ImBin onClick={delVn}/>:null}
+              {recordd==="pending"?<MdSend onClick={sendVn}/>:null}
+          </div>
+
+
+        </Recorded>}
       </InputWrapper>
     </Wrapper>
   );
@@ -290,6 +419,43 @@ const ErrorWrap = styled.div`
     opacity: 1;
   }
 `;
+
+
+const Recorded = styled.div`
+position:absolute;
+padding:0 0.5rem;
+top:0;
+width:100%;
+height:100%;
+display:flex;
+justify-content:space-between;
+background:whitesmoke;
+
+left:0;
+align-items:center;
+
+div{
+  display:flex;
+  width:80px;
+  justify-content:space-between;
+  align-items:center;
+
+  p{
+    font-size:12px;
+  }
+}
+
+audio{
+  visibility:hidden;
+  height: var(--display_scrn);
+  width:100%;
+}
+`
+
+const Stop = styled(BsStopCircleFill)`
+color:#d0342c;
+`
+
 const ChatHeader = styled.nav`
   display: flex;
   justify-content: space-between;
@@ -385,7 +551,7 @@ const InputWrapper = styled.div`
   opacity: 0;
 `;
 
-const VideoaAdd = styled(AiOutlineVideoCameraAdd)`
+const VideoAdd = styled(AiOutlineVideoCameraAdd)`
   cursor: pointer;
   transition: 0.2s;
   transition-property: transform;

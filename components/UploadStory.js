@@ -1,10 +1,10 @@
+import React, { useEffect, useRef, useState } from "react";
 import { FiSend } from "react-icons/fi";
 import styled from "@emotion/styled";
 import { GrClose } from "react-icons/gr";
 import { BiImageAdd } from "react-icons/bi";
 import { MdColorLens } from "react-icons/md";
 import { AiOutlineVideoCameraAdd } from "react-icons/ai";
-import React, { useEffect, useRef, useState } from "react";
 import { collection, serverTimestamp, addDoc, doc } from "firebase/firestore";
 import { auth, db, storage } from "../firebase";
 import { useAuthState } from "react-firebase-hooks/auth";

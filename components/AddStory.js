@@ -85,5 +85,5 @@ const Addicon = styled(BsPlusCircleFill)`
   backdrop-filter: blur(3px);
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: 15;
 `;

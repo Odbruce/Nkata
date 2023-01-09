@@ -1,7 +1,7 @@
 import React from 'react'
 import styled from '@emotion/styled';
 import {useRouter} from 'next/router';
-import {doc} from "firebase/firestore";
+import {collection, doc, onSnapshot, orderBy, query} from "firebase/firestore";
 import { useDocument } from 'react-firebase-hooks/firestore';
 import { db } from '../firebase';
 import { Notify } from './SideBar';
@@ -13,13 +13,31 @@ const Friend = ({id,uid}) => {
 
     const handle = () => route.push(`/chat/${id}`);
 
+    const Ref = collection(db,"chat");
+    onSnapshot(query(collection(Ref,id,"message"),orderBy("posted","asc")),(snap)=>{
+      snap.docChanges().forEach((change)=>{
+        if (change.type === "added") {
+        // console.log("added:",change.doc.data(),change.newIndex)
+
+          // console.log("added: ", change.doc.data());
+      }
+      if (change.type === "modified") {
+        // console.log("modified:",change)
+          // console.log("Modified  ", change.doc.data());
+      }
+      if (change.type === "removed") {
+          // console.log("Removed: ", change.doc.data());
+      }
+      })
+    })
+
     const friendref = doc(db,"users",uid);
     const [docSnap] = useDocument(friendref);
   return (
     <Friends onClick={handle}>
-    <Image width={60} height={60} src={docSnap?.data().photoURL} alt={docSnap?.data().displayName} />
+    <Image width={60} height={60} src={docSnap?.data()?.photoURL} alt={docSnap?.data()?.displayName} />
     <div>
-      <h1>{docSnap?.data().displayName}</h1>
+      <h1>{docSnap?.data()?.displayName}</h1>
       {/* add substring feature for text to cut text add ellipses */}
       {/* <h4>message from friend</h4> */}
     </div>

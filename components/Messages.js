@@ -25,6 +25,15 @@ useEffect(()=>{
 msgRef.current?.scrollIntoView({behavior:"smooth"})
 },[messages])
 
+if(messages?.type?.includes("audio")){
+  return <>
+  <MediaWrap>
+        <audio controls controlsList="nodownload" type={messages?.type} src={messages?.url} ></audio>
+  </MediaWrap>
+  
+  </>
+}
+
 if(messages?.type?.includes("video")){
   return<>
   <MediaWrap>
@@ -66,6 +75,12 @@ export default Messages;
 
 const MediaWrap=styled.div`
 
+audio{
+ width:300px;
+ max-width:100%;
+ background:whitesmoke;
+  height: var(--display_scrn);
+}
 
 video{
   width:100%;

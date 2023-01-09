@@ -157,10 +157,10 @@ return  setTimeout(()=>
                   </MediaWrap>
                 </Wrapped>
               </div>
-              <div>
+              {/* <div>
                 <AiOutlineAudio/>
                <p>1 audio</p>
-              </div>
+              </div> */}
             </ChatInfo>
             </Wrap>
     </Wrappper>

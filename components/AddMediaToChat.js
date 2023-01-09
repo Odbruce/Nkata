@@ -49,7 +49,6 @@ try {
 
     uploadTask.on("state_changed",snapshot => {
       const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-      console.log(`Upload progress: ${progress}%`);
       setProgress(progress); 
     },null,()=>{
 
@@ -98,7 +97,7 @@ catch(err){
       <Close onClick={Closed}>
         <GrFormClose/>
       </Close>
-     <Image fill src='' id="imgg" alt="" />
+     <Image fill src='/#' id="imgg" alt="image to send" />
      <div id="progressBar">
      </div>
 
@@ -161,7 +160,7 @@ const Wrapper = styled.div`
     height: 50px;
     border-radius: 50%;
     background:conic-gradient(white 0deg,#272727 0deg);
-    z-index:9000;
+    z-index:10;
     transition:0.5s;
     transition-property:background;  
     display:flex;

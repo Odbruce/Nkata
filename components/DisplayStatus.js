@@ -63,7 +63,7 @@ position:absolute;
 top:70px;
 height:1px;
 width:100%;
-z-index:10;
+z-index:15;
 display:flex;
 gap:10px;
 
@@ -96,6 +96,6 @@ const Wrap = styled.section`
   backdrop-filter: blur(3px);
   top: 0;
   left: 0;
-  z-index: 10;
+  z-index: 15;
 `;
 
