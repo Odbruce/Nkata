@@ -28,7 +28,7 @@ msgRef.current?.scrollIntoView({behavior:"smooth"})
 if(messages?.type?.includes("audio")){
   return <>
   <MediaWrap>
-        <audio controls controlsList="nodownload" type={messages?.type} src={messages?.url} ></audio>
+        <audio controls controlsList="nodownload" type="audio/*" src={messages?.url} ></audio>
   </MediaWrap>
   
   </>

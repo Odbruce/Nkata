@@ -56,15 +56,15 @@ const ChatComponent = ({ chat, recipient, messages }) => {
           }, 4000);
       }
       else{
+        vid_display.src=URL.createObjectURL(e.target.files[0])
      document.getElementById("addMediaToChat").style.transform="scaleY(1) scaleX(1) translateY(0)";
-    vid_display.src=URL.createObjectURL(e.target.files[0])
     vid_display.alt=e.target.files[0].name;
     vid_display.style.display="initial";
     img_display.style.display="none"}
   }
   else{
-    document.getElementById("addMediaToChat").style.transform="scaleY(1) scaleX(1) translateY(0)";
     img_display.src=URL.createObjectURL(e.target.files[0]);
+    document.getElementById("addMediaToChat").style.transform="scaleY(1) scaleX(1) translateY(0)";
     img_display.alt=e.target.files[0].name;
     img_display.style.display="initial";
     vid_display.style.display="none";
@@ -175,7 +175,6 @@ const ChatComponent = ({ chat, recipient, messages }) => {
   const audioData = useRef("")
   const audRef = useRef(null)
 
-  const audioRef = document.getElementById("audio");
 
 const [recordd,setRecord] = useState("")
 
@@ -210,7 +209,6 @@ const displayCount = ()=>{
     
     setRecord("recording");
 
-    const audioRef = document.getElementById("audio");
 
     navigator.mediaDevices.getUserMedia({ audio: true })
     .then(async (stream) => {

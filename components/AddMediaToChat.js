@@ -133,7 +133,6 @@ const Wrapper = styled.div`
   margin: 0 auto;
   left: 0;
   right: 0;
-  // border-radius: 45px;
   background: linear-gradient(145deg, #f5f5f5, #cecece);
   box-shadow: 5px 5px 20px #b9b9b9, -5px -5px 20px #ffffff;
 

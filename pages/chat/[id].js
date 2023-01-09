@@ -25,15 +25,12 @@ const Chat = ({chat,messages}) => {
   const [callmsg,setCallMsg] = useState("");
 
 
-console.log(localConn)
 
 const incoming = (msg)=>{
   return setCallMsg(msg);
 }
 
   const handleCall =(msg)=>{
-    console.log(`Message: ${msg?.type}`);
-  console.log(localConn.current.setRemoteDescription);
   switch (msg?.type) {
     case "offer":
       navigator.mediaDevices.getUserMedia({ audio: true,  video: { facingMode: "user" } })
@@ -94,7 +91,6 @@ const incoming = (msg)=>{
 
   useEffect(()=>{
     onSnapshot(doc(db,"users",user?.uid),(snap)=>{
-      console.log(snap.data())
       return handleCall(snap.data())
     })
   },[])
