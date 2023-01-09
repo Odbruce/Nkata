@@ -213,7 +213,7 @@ const displayCount = ()=>{
     navigator.mediaDevices.getUserMedia({ audio: true })
     .then(async (stream) => {
      
-      const mediaRecorder = new MediaRecorder(stream);
+      const mediaRecorder = new MediaRecorder(stream,{mimeType: 'audio/mpeg'});
       audio.current = mediaRecorder;
 
       mediaRecorder.start();
@@ -224,9 +224,8 @@ const displayCount = ()=>{
       
       
       mediaRecorder.ondataavailable = function(e) {
-        // audioData.current = e.data
         if (e.data && e.data.size > 0) {
-          audioData.current.push(e.data);
+          audioData.current = e.data
         }
         const aud = window.URL.createObjectURL(e.data)
         setRecord("pending");
@@ -252,8 +251,8 @@ const delVn = ()=>{
 const sendVn = ()=>{
 
   const storageRef = ref(storage,`new vn ${serverTimestamp()}` );
-  const audioFile = new Blob(audioData.current, 'audio.mpeg');
-  const uploadTask = uploadBytesResumable(storageRef, audioFile);
+
+  const uploadTask = uploadBytesResumable(storageRef, audioData.current);
   uploadTask.on("state_changed", null, null, () => {
     getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
 
